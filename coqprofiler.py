@@ -67,6 +67,7 @@ if FILTER_ZERO_SECONDS_LINES:
     df = df[df.time > 0]
 if SHOW_TOP_N_LINES > 0:
     df = df.nlargest(SHOW_TOP_N_LINES, "time")
+    df = df.sort_values(by=["line"])
 
 
 ##### Plotting
