@@ -1,0 +1,14 @@
+.DS_Store
+
+# Python - Byte-compiled / optimized / DLL files
+__pycache__/*
+*.py[cod]
+*$py.class
+_local/*
+profile.txt
+
+*.aux
+*.vo
+*.vos
+*.glob
+*.vok
