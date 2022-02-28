@@ -82,7 +82,15 @@ plt.tight_layout()
 
 plt.xlabel("seconds")
 plt.ylabel("Line")
-plt.title(f"Profiling data of {input} (total: {total_time} sec)", fontsize=5)
+
+title = f"Profiling data of {input} (total: {total_time} sec"
+if SHOW_TOP_N_LINES > 0:
+    title += f"; showing {SHOW_TOP_N_LINES} lines"
+if FILTER_ZERO_SECONDS_LINES:
+    title += "; filtering 0 seconds lines"
+title += ")"
+
+plt.title(title, fontsize=5)
 
 if OUTPUT_TO_FILE:
     out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.pdf")
