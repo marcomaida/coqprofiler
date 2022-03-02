@@ -12,16 +12,23 @@ known_args, extra_args = parser.parse_known_args()
 input = known_args.input
 coq_args = [arg for arg in extra_args]
 
+###### Deciding output file names
+input_folder = os.path.dirname(input)
+input_basename = os.path.splitext(os.path.basename(input))[0]
+profile_txt_name = os.path.join(PROFILE_FOLDER, f"{input_basename}.txt")
+profile_csv_name = os.path.join(input_folder, f"{input_basename}.csv")
+profile_pdf_name = os.path.join(input_folder, f"{input_basename}.pdf")
+
 ###### Running coqc with -time and outputting to a file
 if SKIP_COQC:
     print("Skipping Coq compilation...")
 else:
     command = ["coqc", input] + coq_args
     if '-time' not in command: command += ['-time']
-    if not os.path.exists(os.path.dirname(PROFILE_FILE)): 
-        os.makedirs(os.path.dirname(PROFILE_FILE))
+    if not os.path.exists(os.path.dirname(profile_txt_name)): 
+        os.makedirs(os.path.dirname(profile_txt_name))
 
-    with open(PROFILE_FILE, "w") as outfile:
+    with open(profile_txt_name, "w") as outfile:
         print("Running Coq...\n> " + " ".join(command)+"\n")
         r = subprocess.run(command, stdout=outfile)
 
@@ -30,7 +37,7 @@ else:
         sys.exit(1)
 
 ###### Parsing profile text file
-with open(PROFILE_FILE) as file:
+with open(profile_txt_name) as file:
     profile_lines = file.readlines()
 with open(input) as f:
     coq_file = f.read()
@@ -65,9 +72,8 @@ df = pd.DataFrame(data, columns=["line","chars","cert","time"])
 total_time = df["time"].sum()
 
 if SAVE_DATAFRAME:
-    csv_out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.csv")
-    print(f"Saving dataframe to {csv_out_path}...")
-    df.to_csv(csv_out_path)
+    print(f"Saving dataframe to {profile_csv_name}...")
+    df.to_csv(profile_csv_name)
 
 if FILTER_ZERO_SECONDS_LINES:
     df = df[df.time > 0]
@@ -99,9 +105,8 @@ title += ")"
 plt.title(title, fontsize=5)
 
 if OUTPUT_TO_FILE:
-    fig_out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.pdf")
-    print(f"Saving figure to {fig_out_path}...")
-    plt.savefig(fig_out_path)
+    print(f"Saving figure to {profile_pdf_name}...")
+    plt.savefig(profile_pdf_name)
 else:
     ###### Showing interface with sliders
     line_numbers = list(df["line"])

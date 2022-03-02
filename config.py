@@ -1,4 +1,4 @@
-PROFILE_FILE = "raw/profile.txt"   # Temporary raw file directory
+PROFILE_FOLDER = "raw"             # Temporary raw file directory
 CHARS_PER_LINE = 60                # Maximum number of character shown per line in the plot
 
 SKIP_COQC = False                  # False => Run coqc          | True => Use the last raw results in the PROFILE_FILE
