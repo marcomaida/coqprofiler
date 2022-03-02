@@ -63,6 +63,12 @@ for i,l in enumerate(profile_lines):
 
 df = pd.DataFrame(data, columns=["line","chars","cert","time"])
 total_time = df["time"].sum()
+
+if SAVE_DATAFRAME:
+    csv_out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.csv")
+    print(f"Saving dataframe to {csv_out_path}...")
+    df.to_csv(csv_out_path)
+
 if FILTER_ZERO_SECONDS_LINES:
     df = df[df.time > 0]
 if SHOW_TOP_N_LINES > 0:
@@ -93,8 +99,9 @@ title += ")"
 plt.title(title, fontsize=5)
 
 if OUTPUT_TO_FILE:
-    out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.pdf")
-    plt.savefig(out_path)
+    fig_out_path = os.path.join(os.path.dirname(input), f"{os.path.basename(input)}.pdf")
+    print(f"Saving figure to {fig_out_path}...")
+    plt.savefig(fig_out_path)
 else:
     ###### Showing interface with sliders
     line_numbers = list(df["line"])
