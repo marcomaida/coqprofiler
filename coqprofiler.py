@@ -12,10 +12,13 @@ known_args, extra_args = parser.parse_known_args()
 input = known_args.input
 coq_args = [arg for arg in extra_args]
 
-###### Deciding output file names
+###### Deciding output file names and paths
 input_folder = os.path.dirname(input)
 input_basename = os.path.splitext(os.path.basename(input))[0]
-profile_txt_name = os.path.join(PROFILE_FOLDER, f"{input_basename}.txt")
+if SAVE_RAW_FILE:
+    profile_txt_name = os.path.join(input_folder, f"{input_basename}.txt")
+else:
+    profile_txt_name = os.path.join(PROFILE_FOLDER, f"{input_basename}.txt")
 profile_csv_name = os.path.join(input_folder, f"{input_basename}.csv")
 profile_pdf_name = os.path.join(input_folder, f"{input_basename}.pdf")
 
@@ -84,7 +87,7 @@ if SHOW_TOP_N_LINES > 0:
 
 ##### Plotting
 sb.set(rc={'axes.facecolor':'white', 'figure.facecolor':'white'})
-if OUTPUT_TO_FILE:
+if SAVE_PLOT:
     plt.figure(figsize=(BASIC_WIDTH  + EXTRA_WIDTH_PER_CHARACTER * CHARS_PER_LINE, 
                         BASIC_HEIGHT + EXTRA_HEIGHT_PER_LINE     * df.shape[0]    ))
 ax = sb.barplot(data=df, y="line", x="time", orient="h")
@@ -104,7 +107,7 @@ title += ")"
 
 plt.title(title, fontsize=5)
 
-if OUTPUT_TO_FILE:
+if SAVE_PLOT:
     print(f"Saving figure to {profile_pdf_name}...")
     plt.savefig(profile_pdf_name)
 else:
