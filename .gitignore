@@ -5,7 +5,8 @@ __pycache__/*
 *.py[cod]
 *$py.class
 _local/*
-profile.txt
+raw/*
+debug/*
 
 *.aux
 *.vo
