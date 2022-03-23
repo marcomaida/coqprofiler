@@ -9,8 +9,9 @@ It can output the plots in `.pdf` format or show them on screen.
 pip3 install matplotlib seaborn pandas
 ```
 ## Usage
-- Use as you would use `coqc`. You can pass `coqc` parameters to it.
-- If necessary, tweak `config.py` file to change to change preferences
+- `./coqprofiler.py example/example.v`  
+  - Use as you would use `coqc`: you can pass `coqc` parameters to the profiler.
+- If necessary, tweak `config.py` file to change preferences
 - Type `make example` and check the `example/` folder to test
 
 
