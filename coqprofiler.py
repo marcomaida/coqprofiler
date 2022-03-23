@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-import os, sys, subprocess, re, argparse
 from config import *
-import matplotlib.pyplot as plt, seaborn as sb, pandas as pd
+import os, sys, subprocess, re, argparse
+import matplotlib.pyplot as plt
+import seaborn as sb
+import pandas as pd
 from matplotlib import rcParams
 from matplotlib.widgets import Slider
 
@@ -51,25 +53,27 @@ time_re = re.compile("] (.*) secs")
 
 data = []
 for i,l in enumerate(profile_lines):
-    time = float(time_re.search(l).group(1))
+    search = time_re.search(l)
+    if search is None or search.group(1) is None: continue
+    time = float(search.group(1))
     instr = instr_re.search(l).group(1)
     chars_search = chars_s_re.search(l)
     charsl = int(chars_search.group(1))
     charsr = int(chars_search.group(2))
     chars = f' ({charsl}-{charsr})'
     line = coq_file[:charsl].count("\n")+1
-
-    line_l = f"{line}: "
-    line_instr = coq_file[charsl-1:charsr].replace("\n"," ")[:CHARS_PER_LINE]
-    cert = line_l + line_instr.ljust(CHARS_PER_LINE)
+    line_instr = coq_file[charsl-1:charsr].replace("\n"," ")
 
     if len(data) > 0 and line == data[-1][0]: # Group together if same line
         data[-1][1] += ", " + chars
-        # if len(data[-1][2]) < CHARS_PER_LINE:
-        #     data[-1][2] += cert
+        data[-1][2] += line_instr
         data[-1][3] += time
     else:
-        data += [[line,chars, cert, time]]
+        data += [[line, chars, line_instr, time]]
+
+# Formal line with line number and maximum chars
+for l in data:
+    l[2] = f"{l[0]}: {l[2][:CHARS_PER_LINE].ljust(CHARS_PER_LINE)}"
 
 df = pd.DataFrame(data, columns=["line","chars","cert","time"])
 total_time = df["time"].sum()
@@ -98,7 +102,7 @@ plt.tight_layout()
 plt.xlabel("seconds")
 plt.ylabel("Line")
 
-title = f"Profiling data of {input} (total: {total_time} sec"
+title = f"Profiling data of {input} (total: {total_time:.0f} sec"
 if SHOW_TOP_N_LINES > 0:
     title += f"; showing {SHOW_TOP_N_LINES} lines"
 if FILTER_ZERO_SECONDS_LINES:

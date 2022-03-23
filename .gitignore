@@ -8,6 +8,9 @@ _local/*
 raw/*
 debug/*
 
+example/*
+!example/example.v
+
 *.aux
 *.vo
 *.vos
